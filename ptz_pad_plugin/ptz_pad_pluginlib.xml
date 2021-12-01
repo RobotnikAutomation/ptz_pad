@@ -1,0 +1,5 @@
+<library path="lib/libptz_pad_pluginlib">
+    <class name="ptz_pad_plugin/PtzArm" type="pad_plugins::PadPluginPtzArm" base_class_type="pad_plugins::GenericPadPlugin">
+        <description>This is the Pad movement plugin for controlling the ptz cameras.</description>
+    </class>
+</library>
