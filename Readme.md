@@ -27,7 +27,7 @@ plugins:
   - Ptz
 
 Ptz:
-  type: robotnik_pad_plugins/Ptz
+  type: ptz_pad_plugins/Ptz
   cmd_topic_ptz: ptz/command
   
   speed_increment: 0.5
