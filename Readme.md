@@ -27,7 +27,7 @@ plugins:
   - Ptz
 
 Ptz:
-  type: ptz_pad_plugins/Ptz
+  type: ptz_pad_plugin/Ptz
   cmd_topic_ptz: ptz/command
   
   speed_increment: 0.5
