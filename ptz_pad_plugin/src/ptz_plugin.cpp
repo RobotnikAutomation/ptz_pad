@@ -1,4 +1,4 @@
-#include <robotnik_pad_plugins/ptz_plugin.h>
+#include <ptz_pad_plugin/ptz_plugin.h>
 
 namespace pad_plugins
 {
