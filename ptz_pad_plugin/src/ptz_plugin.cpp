@@ -24,7 +24,7 @@ namespace pad_plugins
         readParam(pnh_, "config/button_zoom_out", button_zoom_out_, button_zoom_out_, required);
         readParam(pnh_, "config/button_increment_up", button_step_up_, button_step_up_, required);
         readParam(pnh_, "config/button_increment_down", button_step_down_, button_step_down_, required);
-        readParam(pnh_, "config/button_ptz_mode", button_ptz_mode_, button_ptz_mode_, required);
+        //readParam(pnh_, "config/button_ptz_mode", button_ptz_mode_, button_ptz_mode_, required);
 
 
         readParam(pnh_, "cmd_topic_ptz", cmd_topic_ptz_, cmd_topic_ptz_, required);
@@ -43,6 +43,9 @@ namespace pad_plugins
         readParam(pnh_, "home_tilt_position", home_tilt_position_, home_tilt_position_, required);
         readParam(pnh_, "home_zoom_position", home_zoom_position_, home_zoom_position_, required);
 
+        set_position_mode_ = false;
+        readParam(pnh_, "set_position_mode", set_position_mode_, set_position_mode_, required);
+
 
         ptz_pub_ = nh_.advertise<robotnik_msgs::ptz>(cmd_topic_ptz_, 10);
   
@@ -57,7 +60,11 @@ namespace pad_plugins
         pan_speed_ = 0.0;
         current_speed_ = speed_increment_;
         
-        ptz_mode_ = PtzModes::Speed;
+        if (set_position_mode_ == true) {
+            ptz_mode_ = PtzModes::Position;
+        } else {
+            ptz_mode_ = PtzModes::Speed;
+        }
 
         zoom_level_ = 50;
 
@@ -159,7 +166,6 @@ namespace pad_plugins
                 // ROS_INFO("---------------------------Timeout: %f", timeout);
                 
                 if (up_arrow.isPressed()){
-                    
                     tilt_position_ = tilt_position_ + current_position_increment_;
                 }
 
@@ -174,6 +180,9 @@ namespace pad_plugins
                 if (left_arrow.isPressed()){
                     pan_position_ = pan_position_ - current_position_increment_;    
                 }
+
+                tilt_position_ = std::max(std::min(tilt_position_, max_tilt_position_), min_tilt_position_);
+                pan_position_ = std::max(std::min(pan_position_, max_pan_position_), min_pan_position_);
 
             }
 
@@ -327,15 +336,8 @@ namespace pad_plugins
             }
             */
 
-            // Check if home button was pressed the last time
-            if (old_cmd_ptz_.relative == false && old_cmd_ptz_.mode == "position"){ 
-                old_cmd_ptz_ = cmd_ptz;
-            }
-            else{
-                ptz_pub_.publish(cmd_ptz);
-                old_cmd_ptz_ = cmd_ptz;
-            } 
-            
+            ptz_pub_.publish(cmd_ptz);
+            old_cmd_ptz_ = cmd_ptz;
         }
 
     }
@@ -348,16 +350,15 @@ namespace pad_plugins
         
         robotnik_msgs::ptz cmd_ptz;
 
-        int mode = ptzMode(buttons);
         updateArrows(axes);
 
         if (buttons[button_dead_man_].isPressed()){
 
-            if (mode == PtzModes::Position){
+            if (ptz_mode_ == PtzModes::Position){
                 cmd_ptz = positionControl(buttons);
                 publishPtz(cmd_ptz);
             }
-            else if (mode == PtzModes::Speed){
+            else if (ptz_mode_ == PtzModes::Speed){
                 cmd_ptz = speedControl(buttons);
                 publishPtz(cmd_ptz);
             }
@@ -373,7 +374,7 @@ namespace pad_plugins
 
         else if (buttons[button_dead_man_].isReleased()){
 
-            if(mode == PtzModes::Speed){
+            if(ptz_mode_ == PtzModes::Speed){
                 
                 cmd_ptz.pan = 0.0;
                 cmd_ptz.tilt = 0.0;

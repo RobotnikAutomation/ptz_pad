@@ -45,6 +45,8 @@ Ptz:
   max_tilt_position: 1.57
   max_zoom_position: 12000
 
+  set_position_mode: false # if false, set speed mode
+
   config:
     button_deadman: 5
     button_home: 12
@@ -54,6 +56,6 @@ Ptz:
     button_zoom_out: 6
     button_increment_up: 2 
     button_increment_down: 0
-    button_ptz_mode: 8
+    #button_ptz_mode: 8
 ```
 
