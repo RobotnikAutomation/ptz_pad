@@ -271,7 +271,7 @@ namespace pad_plugins
         cmd_ptz.pan = pan_speed_;
         cmd_ptz.tilt = tilt_speed_;
         //cmd_ptz.zoom = zoom_position_;
-        cmd_ptz.relative = false;
+        cmd_ptz.relative = true;
         cmd_ptz.mode="speed";
 
         return cmd_ptz;
